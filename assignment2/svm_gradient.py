@@ -96,4 +96,4 @@ if __name__ == "__main__":
     testY = dataY[int(m*.8):int(m*.9)]
     validateX = dataX[int(m*.9):, :]
     validateY = dataY[int(m*.9):]
-    (a, b) = train(trainX, trainY, testX=testX, testY=testY)
+    (a, b, lost, acc) = train(trainX, trainY, testX=testX, testY=testY)
