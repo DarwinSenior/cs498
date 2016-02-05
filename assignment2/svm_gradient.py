@@ -1,4 +1,5 @@
 import numpy
+import pdb
 import pandas
 from matplotlib import pyplot
 
@@ -31,7 +32,7 @@ def get_dataset():
     dataX = data.select_dtypes([numpy.number])
     # for data<50k -> 1 and data>50k -> 0
     dataY = (data[len(data.columns)-1] == "<=50K")*2-1
-    return dataX.as_matrix(), dataY
+    return dataX.as_matrix(), dataY.as_matrix()
 
 
 # svm error function E = max((1-y(ax-b))^2, 0)+lambda/2*a^2
@@ -45,13 +46,14 @@ def hinge_lost(testX, testY, a, b):
     @type testY: numpy.array
     @type a: numpy.array
     """
-    return numpy.max(testY*(1-testX*a+b), 0)
+    return numpy.max(testY*(1-testX.dot(a)+b), 0)
 
 
 def update(a, b, x, y, e, l):
-    errors = (y*(x*a+b) >= 1)
-    a -= len(errors)*e*l*a-x*(y*errors)
-    b -= numpy.dot(y, errors)+b
+    # pdb.set_trace()
+    errors = (y*(x.dot(a)+b) < 1)
+    a -= e*(len(errors)*l*a-(y*errors).dot(x))
+    b -= e*numpy.dot(y, errors)
 
 
 def train(trainX, trainY, iters=1000, l=1, interval=10,
@@ -59,9 +61,11 @@ def train(trainX, trainY, iters=1000, l=1, interval=10,
     (m, n) = trainX.shape
     a = numpy.zeros(n)
     b = 0
+
     plotter.start() if plotter else None
-    testX = trainX if plotter and not testX else testX
-    testY = trainY if plotter and not testY else testY
+    testX = trainX if not testX else testX
+    testY = trainY if not testY else testY
+
     for iter in range(iters):
         rands = numpy.random.randint(0, m, interval)
         e = 1/(0.01*iter+50)
@@ -69,11 +73,12 @@ def train(trainX, trainY, iters=1000, l=1, interval=10,
         y = trainY[rands]
         update(a, b, x, y, e, l)
         plotter.update(hinge_lost(testX, testY)) if plotter else None
+        print(hinge_lost(testX, testY, a, b))
     return (a, b)
 
 
 def predict(testX, a, b):
-    return numpy.sign(testX*a+b)
+    return numpy.sign(testX.dot(a)+b)
 
 
 if __name__ == "__main__":
