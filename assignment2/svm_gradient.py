@@ -66,7 +66,7 @@ def update(a, b, X, Y, e, l):
             a -= e*l*a
         else:
             a -= e*(l*a-y*x)
-            b += y
+            b += e*y
 
 
 def train(trainX, trainY, iters=1000, l=1, interval=10,
@@ -79,7 +79,7 @@ def train(trainX, trainY, iters=1000, l=1, interval=10,
     testX = trainX if testX is not None else testX
     testY = trainY if testY is not None else testY
 
-    lost = []
+    loss = []
     acc = []
     for iter in range(iters):
         rands = numpy.random.randint(0, m, interval)
@@ -88,7 +88,7 @@ def train(trainX, trainY, iters=1000, l=1, interval=10,
         y = trainY[rands]
         update(a, b, x, y, e, l)
         plotter.update(hinge_loss(testX, testY, a, b)) if plotter else None
-        lost.append(hinge_loss(testX, testY, a, b))
+        loss.append(hinge_loss(testX, testY, a, b))
         acc.append(accuracy(testX, testY, a, b))
     return (a, b, lost, acc)
 
