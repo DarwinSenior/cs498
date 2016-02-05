@@ -50,13 +50,23 @@ def hinge_loss(testX, testY, a, b):
     @type testY: numpy.array
     @type a: numpy.array
     """
-    return numpy.sum(numpy.maximum((1-testY*(testX.dot(a)+b)), 0))
+    return numpy.average(numpy.maximum((1-testY*(testX.dot(a)+b)), 0))
 
 
-def update(a, b, x, y, e, l):
-    errors = (y*(x.dot(a)+b) < 1)
-    a -= e*(len(errors)*l*a-(y*errors).dot(x))
-    b -= e*numpy.dot(y, errors)
+# def update(a, b, x, y, e, l):
+#     errors = (y*(x.dot(a)+b) < 1)
+#     a -= e*(len(errors)*l*a-(y*errors).dot(x))
+#     b -= e*numpy.dot(y, errors)
+
+def update(a, b, X, Y, e, l):
+    for i in range(len(Y)):
+        x = X[i]
+        y = Y[i]
+        if y*(a.dot(x)+b) >= 1:
+            a -= e*l*a
+        else:
+            a -= e*(l*a-y*x)
+            b += y
 
 
 def train(trainX, trainY, iters=1000, l=1, interval=10,
