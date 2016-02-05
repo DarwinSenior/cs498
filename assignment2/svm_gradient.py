@@ -26,7 +26,8 @@ class LostVisualiser(object):
 def get_dataset():
     data = pandas.read_csv('./adult.data',
                            na_values=["?"],
-                           skipinitalspace=True).dropna()
+                           header=None,
+                           skipinitialspace=True).dropna()
     dataX = data.select_dtypes([numpy.number])
     # for data<50k -> 1 and data>50k -> 0
     dataY = (data[len(data.columns)-1] == "<=50K")*2-1
