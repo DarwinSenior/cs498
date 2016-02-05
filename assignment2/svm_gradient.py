@@ -44,7 +44,7 @@ def accuracy(testX, testY, a, b):
     return sum(testY*(testX.dot(a)+b) > 0)/len(testY)
 
 
-def hinge_lost(testX, testY, a, b):
+def hinge_loss(testX, testY, a, b):
     """
     @type testX: numpy.array
     @type testY: numpy.array
@@ -77,8 +77,8 @@ def train(trainX, trainY, iters=1000, l=1, interval=10,
         x = trainX[rands]
         y = trainY[rands]
         update(a, b, x, y, e, l)
-        plotter.update(hinge_lost(testX, testY, a, b)) if plotter else None
-        lost.append(hinge_lost(testX, testY, a, b))
+        plotter.update(hinge_loss(testX, testY, a, b)) if plotter else None
+        lost.append(hinge_loss(testX, testY, a, b))
         acc.append(accuracy(testX, testY, a, b))
     return (a, b, lost, acc)
 
