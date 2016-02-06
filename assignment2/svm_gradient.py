@@ -88,9 +88,9 @@ def train(trainX, trainY, iters=1000, l=1, interval=10,
         y = trainY[rands]
         update(a, b, x, y, e, l)
         plotter.update(hinge_loss(testX, testY, a, b)) if plotter else None
-        loss.append(hinge_loss(testX, testY, a, b))
-        acc.append(accuracy(testX, testY, a, b))
-    return (a, b, lost, acc)
+        loss.append(hinge_loss(trainX, trainY, a, b))
+        acc.append(accuracy(trainX, trainY, a, b))
+    return (a, b, loss, acc)
 
 
 def predict(testX, a, b):
