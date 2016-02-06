@@ -83,7 +83,7 @@ def train(trainX, trainY, iters=1000, l=1, interval=10,
     acc = []
     for iter in range(iters):
         rands = numpy.random.randint(0, m, interval)
-        e = 1/(0.01*iter+50)
+        e = 1/(1e6*iter+1e9)
         x = trainX[rands]
         y = trainY[rands]
         update(a, b, x, y, e, l)
