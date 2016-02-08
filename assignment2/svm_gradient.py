@@ -1,4 +1,6 @@
-import numpy
+import numpy as np
+import sklearn.preprocessing as pp
+import sklearn.linear_model as lm
 import pdb
 import pandas
 from matplotlib import pyplot
@@ -24,13 +26,13 @@ class LostVisualiser(object):
         pyplot.draw()
 
 
-def get_dataset():
-    data = pandas.read_csv('./adult.data',
+def get_dataset(name):
+    data = pandas.read_csv(name,
                            na_values=["?"],
                            header=None,
                            skipinitialspace=True).dropna()
-    data = data.reindex(numpy.random.permutation(data.index))
-    dataX = data.select_dtypes([numpy.number])
+    data = data.reindex(np.random.permutation(data.index))
+    dataX = data.select_dtypes([np.number])
     # for data<50k -> 1 and data>50k -> 0
     dataY = (data[len(data.columns)-1] == "<=50K")*2-1
     return dataX.as_matrix(), dataY.as_matrix()
@@ -40,70 +42,93 @@ def get_dataset():
 # a(n+1) = a(n) - eta(lamda_a)-(y(ax+b)>1)
 # b(n+1) = b(n) (y(ax+b)<1)
 
-def accuracy(testX, testY, a, b):
+def accuracy(testX, testY, a, b, scaler=None):
+    testX = scaler.transform(testX) if scaler is not None else testX
     return sum(testY*(testX.dot(a)+b) > 0)/len(testY)
 
 
-def hinge_loss(testX, testY, a, b):
+def hinge_loss(testX, testY, a, b, l):
     """
-    @type testX: numpy.array
-    @type testY: numpy.array
-    @type a: numpy.array
+    @type testX: np.array
+    @type testY: np.array
+    @type a: np.array
     """
-    return numpy.average(numpy.maximum((1-testY*(testX.dot(a)+b)), 0))
+    return np.average(np.maximum((1-testY*(testX.dot(a)+b)), 0))+l/2*a.dot(a)
 
 
 # def update(a, b, x, y, e, l):
 #     errors = (y*(x.dot(a)+b) < 1)
 #     a -= e*(len(errors)*l*a-(y*errors).dot(x))
-#     b -= e*numpy.dot(y, errors)
+#     b -= e*np.dot(y, errors)
 
 def update(a, b, X, Y, e, l):
+    a = a.copy()
     for i in range(len(Y)):
         x = X[i]
         y = Y[i]
         if y*(a.dot(x)+b) >= 1:
-            a -= e*l*a
+            a = (1-e*l)*a
+            b = b
         else:
-            a -= e*(l*a-y*x)
-            b += e*y
+            a = a-e*(l*a-y*x)
+            b = b+e*y
+    return a, b
 
 
-def train(trainX, trainY, iters=1000, l=1, interval=10,
-          plotter=None, testX=None, testY=None):
+def train(trainX, trainY, iters=50, l=1, interval=300,
+          plotter=None, testX=None, testY=None,
+          epoch_fun=lambda x: 1/(0.01*x+10)):
+
     (m, n) = trainX.shape
-    a = numpy.zeros(n)
+    a = np.zeros(n)
     b = 0
 
     plotter.start() if plotter else None
-    testX = trainX if testX is not None else testX
-    testY = trainY if testY is not None else testY
+    # testX = testX or trainX
+    # testY = testY or trainY
 
     loss = []
     acc = []
     for iter in range(iters):
-        rands = numpy.random.randint(0, m, interval)
-        e = 1/(1e6*iter+1e9)
+        rands = np.random.randint(0, m, interval)
+        e = epoch_fun(iter)
         x = trainX[rands]
         y = trainY[rands]
-        update(a, b, x, y, e, l)
-        plotter.update(hinge_loss(testX, testY, a, b)) if plotter else None
-        loss.append(hinge_loss(trainX, trainY, a, b))
-        acc.append(accuracy(trainX, trainY, a, b))
+        a, b = update(a, b, x, y, e, l)
+        loss.append(hinge_loss(trainX, trainY, a, b, l))
+        acc.append(accuracy(testX, testY, a, b))
     return (a, b, loss, acc)
 
 
-def predict(testX, a, b):
-    return numpy.sign(testX.dot(a)+b)
+def predict(testX, a, b, scaler=None):
+    testX = scaler.transform(testX) if scaler is not None else testX
+    return np.sign(testX.dot(a)+b)
 
+
+def kernel(trainX):
+    n, m = trainX.shape
+    kernelX = np.zeros((n, (m+1)*m/2))
+    c = 0
+    for i in range(m):
+        for j in range(i+1):
+            kernelX[:, c] = trainX[:, i]*trainX[:, j]
+            c = c+1
+    return kernelX
+
+
+def perform(l=0.1, interval=300, iters=50):
+    dataX, dataY = get_dataset('./adult.data')
+    n, m = dataX.shape
+    trainX = dataX[:int(m*.9), :]
+    trainY = dataY[:int(m*.9)]
+    scaler = pp.StandardScaler().fit(dataX)
+    testX = dataX[int(m*.9):, :]
+    testY = dataY[int(m*.9):]
+    testX, testY = get_dataset('./adult.test')
+    (a, b, lost, acc) = train(scaler.transform(trainX), trainY,
+                              testX=scaler.transform(testX), testY=testY,
+                              l=l, interval=interval, iters=iters)
+    return (a, b), (lost, acc), scaler
 
 if __name__ == "__main__":
-    dataX, dataY = get_dataset()
-    m = dataY.size
-    trainX = dataX[:int(m*.8), :]
-    trainY = dataY[:int(m*.8)]
-    testX = dataX[int(m*.8):int(m*.9), :]
-    testY = dataY[int(m*.8):int(m*.9)]
-    validateX = dataX[int(m*.9):, :]
-    validateY = dataY[int(m*.9):]
-    (a, b, lost, acc) = train(trainX, trainY, testX=testX, testY=testY)
+    perform()
