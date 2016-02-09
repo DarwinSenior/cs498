@@ -61,7 +61,7 @@ def hinge_loss(testX, testY, a, b, l):
 #     a -= e*(len(errors)*l*a-(y*errors).dot(x))
 #     b -= e*np.dot(y, errors)
 
-def update(a, b, X, Y, e, l):
+def update(a, b, X, Y, e, l, acc, testX, testY):
     a = a.copy()
     for i in range(len(Y)):
         x = X[i]
@@ -72,6 +72,8 @@ def update(a, b, X, Y, e, l):
         else:
             a = a-e*(l*a-y*x)
             b = b+e*y
+        if i % 30 == 0:
+            acc.append(accuracy(testX, testY, a, b))
     return a, b
 
 
@@ -97,9 +99,7 @@ def train(trainX, trainY, iters=50, l=0.001, interval=300,
         e = epoch_fun(iter)
         x = trainX[rands]
         y = trainY[rands]
-        a, b = update(a, b, x, y, e, l)
-        loss.append(hinge_loss(trainX, trainY, a, b, l))
-        acc.append(accuracy(testX, testY, a, b))
+        a, b = update(a, b, x, y, e, l, acc, testX, testY)
     return (a, b, loss, acc)
 
 
