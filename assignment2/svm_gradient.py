@@ -35,7 +35,7 @@ def get_dataset(name):
     dataX = data.select_dtypes([np.number])
     # for data<50k -> 1 and data>50k -> 0
     dataY = (data[len(data.columns)-1] == "<=50K")*2-1
-    return dataX.as_matrix(), dataY.as_matrix()
+    return dataX.as_matrix()[:,1:], dataY.as_matrix()
 
 
 # svm error function E = max((1-y(ax-b))^2, 0)+lambda/2*a^2
@@ -75,15 +75,18 @@ def update(a, b, X, Y, e, l):
     return a, b
 
 
-def train(trainX, trainY, iters=50, l=1, interval=300,
+def train(trainX, trainY, iters=50, l=0.001, interval=300,
           plotter=None, testX=None, testY=None,
-          epoch_fun=lambda x: 1/(0.01*x+10)):
+          epoch_fun=lambda x: 1/(0.01*x+20)):
+# def train(trainX, trainY, iters=50, l=1, interval=300,
+#           plotter=None, testX=None, testY=None,
+#           epoch_fun=lambda x: 1/(0.05*x+100)):
 
     (m, n) = trainX.shape
     a = np.zeros(n)
     b = 0
 
-    plotter.start() if plotter else None
+    # plotter.start() if plotter else None
     # testX = testX or trainX
     # testY = testY or trainY
 
@@ -116,19 +119,36 @@ def kernel(trainX):
     return kernelX
 
 
-def perform(l=0.1, interval=300, iters=50):
+def perform(l=0.001, interval=300, iters=50):
     dataX, dataY = get_dataset('./adult.data')
     n, m = dataX.shape
     trainX = dataX[:int(m*.9), :]
     trainY = dataY[:int(m*.9)]
     scaler = pp.StandardScaler().fit(dataX)
+    # scaler = pp.Normalizer().fit(dataX)
     testX = dataX[int(m*.9):, :]
     testY = dataY[int(m*.9):]
-    testX, testY = get_dataset('./adult.test')
+    # pdb.set_trace()
     (a, b, lost, acc) = train(scaler.transform(trainX), trainY,
                               testX=scaler.transform(testX), testY=testY,
                               l=l, interval=interval, iters=iters)
-    return (a, b), (lost, acc), scaler
+    # testX, testY = get_dataset('./adult.test')
+    # return (a, b), (lost, acc), scaler
+    return a, b, lost, np.array(acc), np.array(scaler)
+
 
 if __name__ == "__main__":
-    perform()
+    it = 200
+    stepsize = 1
+    a1,b1,lost1,acc1,sc1 = perform(l=1, iters=it)
+    a2,b2,lost2,acc2,sc2 = perform(l=0.1, iters=it)
+    a3,b3,lost3,acc3,sc3 = perform(l=0.01, iters=it)
+    a4,b4,lost4,acc4,sc4 = perform(l=0.001, iters=it)
+    X = np.array(range(0, len(acc1), stepsize))
+    p1, = pyplot.plot(X, acc1[0:len(acc1):stepsize],label='lambda=1')
+    p2, = pyplot.plot(X, acc2[0:len(acc2):stepsize],label='lambda=0.1')
+    p3, = pyplot.plot(X, acc3[0:len(acc3):stepsize],label='lambda=0.01')
+    p4, = pyplot.plot(X, acc4[0:len(acc4):stepsize],label='lambda=0.001')
+    pyplot.legend(handles=[p1,p2,p3,p4], bbox_to_anchor=(0., 1.02, 1., .102), loc=3,
+           ncol=2, mode="expand", borderaxespad=0.)
+    pyplot.show()
