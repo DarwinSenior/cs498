@@ -120,10 +120,12 @@ def kernel(trainX):
 
 
 def perform(l=0.001, interval=300, iters=50):
-    dataX, dataY = get_dataset('./adult.data')
+    dataX, dataY = get_dataset('./adult_total.data')
     n, m = dataX.shape
-    trainX = dataX[:int(m*.9), :]
-    trainY = dataY[:int(m*.9)]
+    trainX = dataX[:int(m*.8), :]
+    trainY = dataY[:int(m*.8)]
+    validationX = dataX[int(m*.8):int(m*.9), :]
+    validationY = dataY[int(m*.8):int(m*.9)]
     scaler = pp.StandardScaler().fit(dataX)
     # scaler = pp.Normalizer().fit(dataX)
     testX = dataX[int(m*.9):, :]
@@ -132,7 +134,6 @@ def perform(l=0.001, interval=300, iters=50):
     (a, b, lost, acc) = train(scaler.transform(trainX), trainY,
                               testX=scaler.transform(testX), testY=testY,
                               l=l, interval=interval, iters=iters)
-    # testX, testY = get_dataset('./adult.test')
     # return (a, b), (lost, acc), scaler
     return a, b, lost, np.array(acc), np.array(scaler)
 
