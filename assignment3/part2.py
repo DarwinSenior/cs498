@@ -32,10 +32,7 @@ class ground_truth_classifier(object):
         names2 = self.names[idx2]
         return (names1 == names2)
 
+    def score(self, x, y):
+        y_ = self.predict(x)
+        return (np.sum(y == y_) / y.size)
 
-def test_ground_truth(names):
-    model = ground_truth_classifier('./data/pubfig_attributes.txt')
-    for name in names:
-        (x, y) = pt1.read_data(names)
-        y_ = ground_truth_classifier()
-        print("the data from %s has accuracy of %f"%(name, np.sum(y==y_)/y.size))

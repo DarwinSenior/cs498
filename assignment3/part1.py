@@ -7,11 +7,24 @@ import sklearn.ensemble as ensemble
 
 
 def read_data(filename):
-    data = pd.read_csv(filename, header=None, sep='\t').as_matrix()
+    data = pd.read_csv(filename, header=None, sep='\t', skiprows=1).as_matrix()
     np.random.shuffle(data)
     data_y = data[:, 0] != 0
     data_x = data[:, 1:]
     return (data_x, data_y)
+
+
+def read_datax(filename):
+    data = pd.read_csv(filename, header=None, sep='\t', skiprows=2)
+    return data.as_matrix()
+
+
+def read_datay(filename):
+    """
+    it reads the data in the end as a int64 array
+    """
+    data = pd.read_csv(filename, sep=',')
+    return data['Prediction'].as_matrix()
 
 
 def partition(datax, datay, prorportion=[8, 1, 1]):
@@ -43,11 +56,11 @@ def test_case(filename, trainer):
 def run_part1():
     acc1 = test_case('./pubfig_dev_50000_pairs.txt', nb.GaussianNB())
     acc2 = test_case('./pubfig_dev_50000_pairs.txt', svm.SVC(kernel="linear"))
-    acc3 = test_case('./pubfig_dev_50000_pairs.txt', ensemble.RandomForestClassifier())
-    print("the accuracy of Naive Bayes with Gaussian Distribution is %f"%acc1)
-    print("the accuracy of SVM is %f"%acc2)
-    print("the accuracy of Random Forest is %f"%acc3)
+    acc3 = test_case('./pubfig_dev_50000_pairs.txt',
+                     ensemble.RandomForestClassifier())
+    print("the accuracy of Naive Bayes with Gaussian Distribution is %f" % acc1)
+    print("the accuracy of SVM is %f" % acc2)
+    print("the accuracy of Random Forest is %f" % acc3)
 
 if __name__ == "__main__":
     run_part1()
-
