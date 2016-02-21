@@ -2,9 +2,11 @@ import numpy as np
 from part1 import read_data, read_datax, read_datay
 from part2 import split_attrs, ground_truth_classifier
 from sklearn.svm import LinearSVC
+from sklearn.svm import SVC
 from sklearn.preprocessing import StandardScaler
 from sklearn.naive_bayes import GaussianNB
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.grid_search import GridSearchCV
 
 
 def minus_app(x):
@@ -137,3 +139,11 @@ if __name__ == '__main__':
 
         print("========== part3 code ================")
         datax, datay = read_data('./data/pubfig_dev_50000_pairs.txt')
+        testx = read_datax('./data/pubfig_kaggle_1.txt')
+        testy = read_datay('./data/pubfig_kaggle_1_solution.txt')
+        trainer = SVC(kernel='rbf', verbose=True)
+        params = {"C": [0.1, 1, 10], "gamma": [0.1, 0.01, 0.001]}
+        grid_search = GridSearchCV(trainer, params)
+        grid_search.fit(datax, datay)
+        score = trainer.score(testx, testy)
+        print("the score is %f" % score)
