@@ -35,4 +35,3 @@ class ground_truth_classifier(object):
     def score(self, x, y):
         y_ = self.predict(x)
         return (np.sum(y == y_) / y.size)
-
