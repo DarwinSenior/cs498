@@ -6,7 +6,11 @@ from sklearn.svm import SVC
 from sklearn.preprocessing import StandardScaler
 from sklearn.naive_bayes import GaussianNB
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.grid_search import GridSearchCV
+try:
+    from spark_sklearn import GridSearchCV
+except:
+    from sklearn.grid_search import GridSearchCV
+
 
 
 def minus_app(x):
@@ -29,9 +33,9 @@ def plus_app(x):
     return x1 + x2
 
 if __name__ == '__main__':
-    run_part1 = False
-    run_part2 = False
-    run_part3 = True
+    run_part1 = True
+    run_part2 = True
+    run_part3 = False
     if run_part1:
         print("------- part1 code -----------")
         datax, datay = read_data('./data/pubfig_dev_50000_pairs.txt')
