@@ -52,7 +52,7 @@ if __name__ == '__main__':
         trainer = LinearSVC(verbose=True)
         trainer.fit(datax, datay)
         score = trainer.score(testx, testy)
-        write_result('name.csv', trainer.predict(scaler.transform(testx)))
+        write_result('name.csv', trainer.predict(scaler.transform(eval_set)))
         print("the score for raw data is %f" % score)
 
         print("second train with difference")
