@@ -10,6 +10,7 @@ try:
     from spark_sklearn import GridSearchCV
 except:
     from sklearn.grid_search import GridSearchCV
+from write_result import write_result
 
 
 
@@ -36,6 +37,7 @@ if __name__ == '__main__':
     run_part1 = True
     run_part2 = True
     run_part3 = False
+    eval_set = read_datax('./data/pubfig_kaggle_eval.txt')
     if run_part1:
         print("------- part1 code -----------")
         datax, datay = read_data('./data/pubfig_dev_50000_pairs.txt')
@@ -50,6 +52,7 @@ if __name__ == '__main__':
         trainer = LinearSVC(verbose=True)
         trainer.fit(datax, datay)
         score = trainer.score(testx, testy)
+        write_result('name.csv', trainer.predict(scaler.transform(testx)))
         print("the score for raw data is %f" % score)
 
         print("second train with difference")
