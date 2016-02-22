@@ -6,11 +6,12 @@ from sklearn.svm import SVC
 from sklearn.preprocessing import StandardScaler
 from sklearn.naive_bayes import GaussianNB
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.ensemble import AdaBoostClassifier
 try:
     from spark_sklearn import GridSearchCV
 except:
     from sklearn.grid_search import GridSearchCV
-
 
 
 def minus_app(x):
@@ -33,9 +34,10 @@ def plus_app(x):
     return x1 + x2
 
 if __name__ == '__main__':
-    run_part1 = True
-    run_part2 = True
+    run_part1 = False
+    run_part2 = False
     run_part3 = False
+    run_part3_DT = True
     if run_part1:
         print("------- part1 code -----------")
         datax, datay = read_data('./data/pubfig_dev_50000_pairs.txt')
@@ -151,3 +153,17 @@ if __name__ == '__main__':
         grid_search.fit(datax, datay)
         score = trainer.score(testx, testy)
         print("the score is %f" % score)
+
+    if run_part3_DT:
+
+        print("========= part3 Adaboost ============")
+        datax, datay = read_data('./data/pubfig_dev_50000_pairs.txt')
+        testx = read_datax('./data/pubfig_kaggle_1.txt')
+        testy = read_datay('./data/pubfig_kaggle_1_solution.txt')
+
+        trainer = AdaBoostClassifier(LinearSVC())
+        params = {"n": [10, 20, 30, 40, 50, 60, 70, 80, 90]}
+        grid_search = GridSearchCV(trainer, params)
+        grid_search.fit(datax, datay)
+        score = trainer.score(testx, testy)
+        print("the score is %f" % f)
