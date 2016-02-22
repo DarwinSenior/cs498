@@ -1,6 +1,9 @@
 import numpy as np
 import pandas as pd
-from pyflann import FLANN
+try:
+    from pyflann import FLANN
+except:
+    print("you have to install FLANN!!!!!!!!")
 import part1 as pt1
 
 
