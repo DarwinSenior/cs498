@@ -60,7 +60,7 @@ if __name__ == '__main__':
         trainer.fit(minus_app(datax), datay)
         score = trainer.score(minus_app(testx), testy)
         write_result('svm_second.csv', trainer.predict(
-            scaler.transform(eval_set)))
+            scaler.transform(minus_app(eval_set))))
         print("the score for difference is %f" % score)
 
         print("third train with ratio")
@@ -68,7 +68,7 @@ if __name__ == '__main__':
         trainer.fit(devide_app(datax), datay)
         score = trainer.score(devide_app(testx), testy)
         write_result('svm_third.csv', trainer.predict(
-            scaler.transform(eval_set)))
+            scaler.transform(devide_app(eval_set))))
         print("the score for ratio is %f" % score)
 
         print("forth train with sum")
@@ -76,7 +76,7 @@ if __name__ == '__main__':
         trainer.fit(plus_app(datax), datay)
         score = trainer.score(plus_app(testx), testy)
         write_result('svm_forth.csv', trainer.predict(
-            scaler.transform(eval_set)))
+            scaler.transform(plus_app(eval_set))))
         print("the score for sum is %f" % score)
 
         print("NB first train with the raw data")
@@ -92,7 +92,7 @@ if __name__ == '__main__':
         trainer.fit(minus_app(datax), datay)
         score = trainer.score(minus_app(testx), testy)
         write_result('nb_second.csv', trainer.predict(
-            scaler.transform(eval_set)))
+            scaler.transform(minus_app(eval_set))))
         print("the score for difference is %f" % score)
 
         print("NB two point fifth train with abs difference")
@@ -100,7 +100,7 @@ if __name__ == '__main__':
         trainer.fit(minus_abs_app(datax), datay)
         score = trainer.score(minus_abs_app(testx), testy)
         write_result('nb_two_point_five.csv',
-                     trainer.predict(scaler.transform(eval_set)))
+                     trainer.predict(scaler.transform(minus_abs_app(eval_set))))
         print("the score for abs difference is %f" % score)
 
         print("NB third train with ratio")
@@ -108,7 +108,7 @@ if __name__ == '__main__':
         trainer.fit(devide_app(datax), datay)
         score = trainer.score(devide_app(testx), testy)
         write_result('nb_third.csv', trainer.predict(
-            scaler.transform(eval_set)))
+            scaler.transform(devide_app(eval_set))))
         print("the score for ratio is %f" % score)
 
         print("NB forth train with sum")
@@ -116,7 +116,7 @@ if __name__ == '__main__':
         trainer.fit(plus_app(datax), datay)
         score = trainer.score(plus_app(testx), testy)
         write_result('nb_forth.csv', trainer.predict(
-            scaler.transform(eval_set)))
+            scaler.transform(plus_app(eval_set))))
         print("the score for sum is %f" % score)
 
         print("RF first train with the raw data")
@@ -132,7 +132,7 @@ if __name__ == '__main__':
         trainer.fit(minus_app(datax), datay)
         score = trainer.score(minus_app(testx), testy)
         write_result('rf_second.csv', trainer.predict(
-            scaler.transform(eval_set)))
+            scaler.transform(minus_app(eval_set))))
         print("the score for difference is %f" % score)
 
         print("RF two point fifth train with abs difference")
@@ -140,7 +140,7 @@ if __name__ == '__main__':
         trainer.fit(minus_abs_app(datax), datay)
         score = trainer.score(minus_abs_app(testx), testy)
         write_result('rf_two_point_five.csv',
-                     trainer.predict(scaler.transform(eval_set)))
+                     trainer.predict(scaler.transform(minus_abs_app(eval_set))))
         print("the score for abs difference is %f" % score)
 
         print("RF third train with ratio")
@@ -148,7 +148,7 @@ if __name__ == '__main__':
         trainer.fit(devide_app(datax), datay)
         score = trainer.score(devide_app(testx), testy)
         write_result('rf_third.csv', trainer.predict(
-            scaler.transform(eval_set)))
+            scaler.transform(devide_app(eval_set))))
         print("the score for ratio is %f" % score)
 
         print("RF forth train with sum")
@@ -156,7 +156,7 @@ if __name__ == '__main__':
         trainer.fit(plus_app(datax), datay)
         score = trainer.score(plus_app(testx), testy)
         write_result('rf_forth.csv', trainer.predict(
-            scaler.transform(eval_set)))
+            scaler.transform(plus_app(eval_set))))
         print("the score for sum is %f" % score)
 
     if run_part2:
