@@ -161,8 +161,8 @@ if __name__ == '__main__':
         testx = read_datax('./data/pubfig_kaggle_1.txt')
         testy = read_datay('./data/pubfig_kaggle_1_solution.txt')
 
-        trainer = AdaBoostClassifier(LinearSVC())
-        params = {"n": [10, 20, 30, 40, 50, 60, 70, 80, 90]}
+        trainer = AdaBoostClassifier(SVC(probability=True, kernel="linear"))
+        params = {"n_estimators": [10, 20, 30, 40, 50, 60, 70, 80, 90]}
         grid_search = GridSearchCV(trainer, params)
         grid_search.fit(datax, datay)
         score = trainer.score(testx, testy)
