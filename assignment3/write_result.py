@@ -8,5 +8,5 @@ def write_result(name, y):
     values.dtype.names = columns
     df = pd.DataFrame(values, columns=columns)
     df['Id'] = np.arange(0, y.size)
-    df['Prediction'] = y
+    df['Prediction'] = y.astype(int)
     df.to_csv(name, sep=',', index=False)
