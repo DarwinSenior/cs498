@@ -23,6 +23,11 @@ def minus_abs_app(x):
     return np.abs(x1 - x2)
 
 
+def log_app(x):
+    x1, x2 = split_attrs(x)
+    return np.abs(np.log(x1 / x2))
+
+
 def devide_app(x):
     x1, x2 = split_attrs(x)
     return x1 / x2
@@ -176,14 +181,15 @@ if __name__ == '__main__':
         scaler = StandardScaler().fit(datax)
         datax = scaler.transform(datax)
 
-        testx = read_datax('./data/pubfig_kaggle_1.txt')
-        testy = read_datay('./data/pubfig_kaggle_1_solution.txt')
+        testx = read_datax('./data/pubfig_kaggle_eval.txt')
+        testy = read_datay('./part2.csv')
         testx = scaler.transform(testx)
-        trainer = SVC(kernel='rbf', verbose=True, gamma=0.01)
-        trainer.fit(datax, datay)
+        trainer = SVC(kernel='rbf', verbose=True, gamma=0.01, probability=True)
+
+        trainer.fit(minus_abs_app(datax), datay)
         # params = {"C": [0.1, 1, 10], "gamma": [0.1, 0.01, 0.001]}
         # grid_search = GridSearchCV(trainer, params)
         # grid_search.fit(datax, datay)
-        score = trainer.score(testx, testy)
+        score = trainer.score(minus_abs_app(testx), testy)
         print("the score is %f" % score)
         write_result('part3.csv', trainer.predict(scaler.transform(eval_set)))
