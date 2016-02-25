@@ -25,7 +25,7 @@ def minus_abs_app(x):
 
 def log_app(x):
     x1, x2 = split_attrs(x)
-    return np.abs(np.log(x1 / x2))
+    return np.abs(np.log((x1 + 1) / (x2 + 1)))
 
 
 def devide_app(x):
@@ -184,7 +184,7 @@ if __name__ == '__main__':
         testx = read_datax('./data/pubfig_kaggle_eval.txt')
         testy = read_datay('./part2.csv')
         testx = scaler.transform(testx)
-        trainer = SVC(kernel='rbf', verbose=True, gamma=0.01, probability=True)
+        trainer = SVC(kernel='rbf', verbose=True, gamma=0.01)
 
         trainer.fit(minus_abs_app(datax), datay)
         # params = {"C": [0.1, 1, 10], "gamma": [0.1, 0.01, 0.001]}
