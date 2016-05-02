@@ -1,5 +1,6 @@
 library('gdata')
 library('glmnet')
+library('grgreg')
 
 tempdata = (read.csv('./Oregon_Met_Data.txt', sep=' ', header=T))
 temp_min = sapply(min(tempdata$SID):max(tempdata$SID), function(i) mean(tempdata$Tmin_deg_C[(tempdata$SID == i) & (tempdata$Tmin_deg_C != 9999)]))
