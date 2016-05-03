@@ -32,7 +32,8 @@ eudist2 = function(x, y) rowSums((LONGLATS[x,]-coords[y,])^2)
 kernel = function(sigma) exp(-outer(1:dim(LONGLATS)[1], 1:dim(coords)[1], FUN=eudist2)/(2*sigma^2))
 mats2 = do.call('cbind', Map(kernel, ranges))
 
-pair = predict.cv.glmnet(model, mats2, s='lambda.min')
+# pair = predict.cv.glmnet(model, mats2, s='lambda.min')
+pair = predict(model, mats2, type='response')
 
 tempmat = matrix(pair, 100, 100)
 
