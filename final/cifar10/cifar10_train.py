@@ -111,7 +111,7 @@ def train():
 
                 format_str = ('%s: step %d, loss = %.2f acc = %.2f'
                               '(%.1f examples/sec; %.3f sec/batch)')
-                print(format_str % (datetime.now(), step, loss_value, acc_value
+                print(format_str % (datetime.now(), step, loss_value, acc_value,
                                     examples_per_sec, sec_per_batch))
 
             if step % 100 == 0:
