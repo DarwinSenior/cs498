@@ -73,6 +73,7 @@ def train():
         # Calculate loss.
         loss = cifar10.loss(logits, labels)
         acc = cifar10.accuracy(logits, labels)
+        tf.scalar_summary('accuracy', acc)
 
         # Build a Graph that trains the model with one batch of examples and
         # updates the model parameters.

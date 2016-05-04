@@ -288,6 +288,9 @@ def loss(logits, labels):
     return tf.add_n(tf.get_collection('losses'), name='total_loss')
 
 
+def _add_acc_summaries(acc):
+    tf.scalar_summary('accuracy', acc)
+
 def _add_loss_summaries(total_loss):
     """Add summaries for losses in CIFAR-10 model.
 
