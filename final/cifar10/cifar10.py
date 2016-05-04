@@ -258,9 +258,9 @@ def inference(images):
 
 def accuracy(logits, labels):
     with tf.variable_scope('accuracy'):
-        top_k_op = tf.nn.in_top_k(logits, labels, 1, 'accuracy')
+        top_k_op = tf.nn.in_top_k(logits, labels, 1, name='accuracy')
         acc = tf.reduce_sum(tf.cast(top_k_op, tf.int32)) / tf.size(top_k_op)
-        tf.add_to_collection('accuracy', acc)
+        tf.add_to_collection('losses', acc)
     return acc
 
 
