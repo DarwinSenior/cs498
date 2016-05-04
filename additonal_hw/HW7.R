@@ -17,7 +17,9 @@ kernel1 = function(sigma) exp(-outer(1:dim(coords)[1], 1:dim(coords)[1], FUN=eud
 mats1 = do.call('cbind', Map(function(sigma) exp(-spaces^2/(2*sigma^2)), ranges))
 
 model = cv.glmnet(mats1, temp_min, alpha=0)
-# model = cv.grpreg(mats1, temp_min, group=rep(1:dim(coords)[1], length(ranges)), penalty='grLasso')
+model = cv.grpreg(mats1, temp_min, group=rep(1:dim(coords)[1], length(ranges)), family='gaussian')
+print(model$lambda.min)
+print(model$fit$df[model$lambda == model$lambda.min])
 
 longs = seq(min(coords[,1]), max(coords[,1]), length=100)
 lats = seq(min(coords[,2]), max(coords[,2]), length=100)
@@ -32,8 +34,8 @@ mats2 = do.call('cbind', Map(kernel, ranges))
 
 pair = predict(model, mats2, type='response')
 
-predict(model, type='vars')
-
+# pair = predict.cv.glmnet(model, mats2, s='lambda.min')
+pair = predict(model, mats2, type='response')
 tempmat = matrix(pair, 100, 100)
 
 scale = max(abs(min(pair)), abs(max(pair)))
